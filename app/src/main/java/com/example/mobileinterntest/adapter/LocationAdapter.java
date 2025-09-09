@@ -57,6 +57,9 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         }
         holder.tvLocationName.setText(spannableString);
         holder.tvLocationName.setText(spannableString);
+        holder.itemView.setOnClickListener(OnclickItem -> {
+            onclickItem.onClickItem(position);
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -69,6 +72,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     public void updateData(List<Location> newList) {
         this.locations.clear();
         this.locations.addAll(newList);
+        notifyDataSetChanged();
+    }
+
+    public void clearData(){
+        this.locations.clear();
         notifyDataSetChanged();
     }
 
