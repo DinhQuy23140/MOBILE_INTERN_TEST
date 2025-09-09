@@ -14,7 +14,7 @@ public class MainViewModel extends ViewModel {
 
     Context context;
     LocationRepository locationRepository;
-    MutableLiveData<List<Location>> locationList;
+    MutableLiveData<List<Location>> locationList = new MutableLiveData<>();
 
     public MainViewModel(Context context) {
         this.context = context;
@@ -22,11 +22,10 @@ public class MainViewModel extends ViewModel {
     }
 
     public MutableLiveData<List<Location>> getLocationList() {
-        return locationList;
+        return locationRepository.getLocationList();
     }
 
     public void getLocation(String key, String q, String format) {
         locationRepository.getLocation(key, q, format);
-        locationList = locationRepository.getLocationList();
     }
 }

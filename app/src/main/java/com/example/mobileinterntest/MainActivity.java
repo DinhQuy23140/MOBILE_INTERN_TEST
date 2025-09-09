@@ -1,8 +1,12 @@
 package com.example.mobileinterntest;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     MainViewModel viewModel;
     LocationAdapter adapter;
+    Handler handler = new Handler(Looper.getMainLooper());
+    Runnable runnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +52,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String keyword = binding.edtInputKeyword.getText().toString();
+                String keyword = s.toString().trim();
+                if (runnable != null) {
+                    handler.removeCallbacks(runnable);
+                }
                 if (!keyword.isEmpty()) {
-                    adapter.updateKeyword(keyword);
-                    viewModel.getLocation("pk.2218ee0e8b922a61a6d742d19c4c6e42", keyword, "json");
+                    runnable = () -> {
+                        adapter.updateKeyword(keyword);
+                        viewModel.getLocation("pk.2218ee0e8b922a61a6d742d19c4c6e42", keyword, "json");
+                    };
+                    handler.postDelayed(runnable, 500);
                 }
             }
 
@@ -60,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         });
         viewModel.getLocationList().observe(this, locations -> {
             adapter.updateData(locations);
+            Log.d("Main", String.valueOf(adapter.getItemCount()));
         });
     }
 

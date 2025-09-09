@@ -3,9 +3,11 @@ package com.example.mobileinterntest.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,7 @@ import java.util.Locale;
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocationViewHolder> {
 
     Context context;
-    String keyword;
+    String keyword = "";
     List<Location> locations;
     OnclickItem onclickItem;
 
@@ -47,11 +49,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         SpannableString spannableString = new SpannableString(location.getDisplayName());
         String lowerText = location.getDisplayName().toLowerCase(Locale.ROOT);
         int start = lowerText.indexOf(keyword.toLowerCase());
-        while (start > 0) {
+        while (start >= 0) {
             int end = start + keyword.length();
             spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            start = lowerText.indexOf(keyword.toLowerCase(), end);
         }
-
+        holder.tvLocationName.setText(spannableString);
         holder.tvLocationName.setText(spannableString);
     }
 
@@ -62,9 +66,9 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void updateData(List<Location> locations){
+    public void updateData(List<Location> newList) {
         this.locations.clear();
-        this.locations = locations;
+        this.locations.addAll(newList);
         notifyDataSetChanged();
     }
 
